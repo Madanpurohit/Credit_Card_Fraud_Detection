@@ -6,9 +6,50 @@ import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
 import os
 from h2o.estimators.deeplearning import H2OAutoEncoderEstimator, H2ODeepLearningEstimator
 
+def Credit_checker(cr_n):
+    s = str(cr_n)
+    if s[0] == '4' :
+        print("This is a VISA Card ", end="")
+    elif s[0] == '5' :
+        print("This is a MASTER Card ", end="")
+    elif s[0] == '3' and s[1] == '7' :
+        print("This is a AMERICAN Express Card ",end = "")
+    elif s[0] == '6' :
+        print("This is a DISCOVER Card ", end="")
+    else :
+        return False
+    odd_sum = 0
+    even_sum = 0
+    for i in range(0,16):
+        if((i+1)%2==0):
+            even_sum+=int(cr_n[i])
+        else:
+            y=int(cr_n[i])*2
+            a=y%10
+            b=y//10
+            odd_sum+=a+b
+        if (odd_sum+even_sum)%10==0:
+            return True
+        return False
+
 h2o.init(max_mem_size = 2) # initializing h2o server
 h2o.remove_all()
 
+print("***************CREDIT CARD FRAUD DETECTION USING AUTO ENCODERS***********************")
+print()
+print("------Let's Check Validation of Credit Card--------")
+print()
+cr_n = input("Enter Your Credit Card Number : ")
+if Credit_checker(cr_n) :
+    print("ans its a Valid Credit Card")
+else :
+    print("Not a Valid Credit Card :-)")
+    
+
+print()
+print()
+print("*-*-*-*-*-*-*-Lets See Frauds of Credit Card all over the World-*-*-*-*-*-*-*-*-*")
+print()
 
 creditData = pd.read_csv(r"C:\Users\Madan Purohit\Documents\File_Path\creditcard.csv") 
 creditData.describe()
@@ -202,9 +243,7 @@ _ = ax.hist(fraud_error_df.reconstruction_error.values, bins=10)
 
 
 
-from sklearn.metrics import (confusion_matrix, precision_recall_curve, auc,
-                             roc_curve, recall_score, classification_report, f1_score,
-                             precision_recall_fscore_support)
+from sklearn.metrics import (confusion_matrix, precision_recall_curve, auc,roc_curve,recall_score, classification_report, f1_score,precision_recall_fscore_support)
 fpr, tpr, thresholds = roc_curve(error_df.true_class, error_df.reconstruction_error)
 roc_auc = auc(fpr, tpr)
 plt.title('Receiver Operating Characteristic')
@@ -266,9 +305,3 @@ plt.show()
 #Classification Report
 csr = classification_report(error_df.true_class, y_pred)
 print(csr)
-
-
-
-
-
-
